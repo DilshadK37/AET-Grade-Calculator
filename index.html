@@ -1,14 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>AET Grade Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: Arial, sans-serif;
-      padding: 30px;
+      padding: 20px;
+      margin: 0;
+      background: #f9f9f9;
+    }
+    .container {
       max-width: 500px;
       margin: auto;
-      background: #f9f9f9;
+      background: white;
+      padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
@@ -23,19 +33,21 @@
     }
     input {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      font-size: 16px;
     }
     button {
-      padding: 10px 20px;
+      padding: 10px 15px;
       margin: 15px 5px 10px 0;
       background-color: #2980b9;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      font-size: 16px;
     }
     button:hover {
       background-color: #1f6391;
@@ -52,43 +64,58 @@
     #errorMsg {
       color: red;
       margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      input, button {
+        font-size: 16px;
+      }
+      .container {
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <h2>AET Grade Calculator</h2>
+  <div class="container">
+    <h2>AET Grade Calculator</h2>
 
-  <label for="a">PT1 Mark (Max 20):</label>
-  <input type="number" id="a" max="20" min="0" />
+    <label for="a">PT1 Mark (Max 20):</label>
+    <input type="number" id="a" max="20" min="0" />
 
-  <label for="b">PT2 Mark (Max 20):</label>
-  <input type="number" id="b" max="20" min="0" />
+    <label for="b">PT2 Mark (Max 20):</label>
+    <input type="number" id="b" max="20" min="0" />
 
-  <label for="q">Term Mark (Max 50):</label>
-  <input type="number" id="q" max="50" min="0" />
+    <label for="q">Term Mark (Max 50):</label>
+    <input type="number" id="q" max="50" min="0" />
 
-  <label for="r">MA Mark (Max 5):</label>
-  <input type="number" id="r" max="5" min="0" />
+    <label for="r">MA Mark (Max 5):</label>
+    <input type="number" id="r" max="5" min="0" />
 
-  <label for="s">PF Mark (Max 5):</label>
-  <input type="number" id="s" max="5" min="0" />
+    <label for="s">PF Mark (Max 5):</label>
+    <input type="number" id="s" max="5" min="0" />
 
-  <label for="t">SE Mark (Max 5):</label>
-  <input type="number" id="t" max="5" min="0" />
+    <label for="t">SE Mark (Max 5):</label>
+    <input type="number" id="t" max="5" min="0" />
 
-  <div style="margin-top: 15px;">
-    <button onclick="calculate()">Calculate</button>
-    <button onclick="clearFields()">Clear</button>
-  </div>
+    <div style="margin-top: 15px;">
+      <button onclick="calculate()">Calculate</button>
+      <button onclick="clearFields()">Clear</button>
+    </div>
 
-  <p id="errorMsg"></p>
+    <p id="errorMsg"></p>
 
-  <div class="output">
-    <h3>Results:</h3>
-    <p>PT (out of 5) = <span id="x">---</span></p>
-    <p>Term (out of 80) = <span id="y">---</span></p>
-    <p>Total (out of 100) = <span id="z">---</span></p>
-    <p class="result">Grade: <span id="grade">---</span></p>
+    <div class="output">
+      <h3>Results:</h3>
+      <p>PT (out of 5) = <span id="x">---</span></p>
+      <p>Term (out of 80) = <span id="y">---</span></p>
+      <p>Total (out of 100) = <span id="z">---</span></p>
+      <p class="result">Grade: <span id="grade">---</span></p>
+    </div>
   </div>
 
   <script>
@@ -100,8 +127,30 @@
       const s = parseFloat(document.getElementById("s").value);
       const t = parseFloat(document.getElementById("t").value);
 
-      if ([a, b, q, r, s, t].some(val => isNaN(val) || val < 0)) {
-        document.getElementById("errorMsg").textContent = "Please enter valid numbers in all fields.";
+      const maxLimits = {
+        a: 20,
+        b: 20,
+        q: 50,
+        r: 5,
+        s: 5,
+        t: 5
+      };
+
+      let errorMessages = [];
+
+      if (isNaN(a) || isNaN(b) || isNaN(q) || isNaN(r) || isNaN(s) || isNaN(t)) {
+        errorMessages.push("Please fill in all fields with valid numbers.");
+      }
+
+      if (a > maxLimits.a) errorMessages.push("PT1 mark cannot exceed 20.");
+      if (b > maxLimits.b) errorMessages.push("PT2 mark cannot exceed 20.");
+      if (q > maxLimits.q) errorMessages.push("Term mark cannot exceed 50.");
+      if (r > maxLimits.r) errorMessages.push("MA mark cannot exceed 5.");
+      if (s > maxLimits.s) errorMessages.push("PF mark cannot exceed 5.");
+      if (t > maxLimits.t) errorMessages.push("SE mark cannot exceed 5.");
+
+      if (errorMessages.length > 0) {
+        document.getElementById("errorMsg").textContent = errorMessages.join("\n");
         return;
       }
 
