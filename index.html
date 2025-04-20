@@ -5,19 +5,52 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input, button {
-      margin: 10px 0;
-      padding: 5px;
-      width: 100px;
+    h2 {
+      text-align: center;
+      color: #2c3e50;
     }
     label {
-      display: inline-block;
-      width: 100px;
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 15px 5px 10px 0;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1f6391;
     }
     .result {
       font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
+      color: #27ae60;
+    }
+    .output p {
+      margin: 5px 0;
+    }
+    #errorMsg {
+      color: red;
       margin-top: 10px;
     }
   </style>
@@ -25,31 +58,38 @@
 <body>
   <h2>AET Grade Calculator</h2>
 
-  <label for="a">Enter PT1 Mark (20):</label>
-  <input type="number" id="a" /><br />
+  <label for="a">PT1 Mark (Max 20):</label>
+  <input type="number" id="a" max="20" min="0" />
 
-  <label for="b">Enter PT2 Mark (20):</label>
-  <input type="number" id="b" /><br />
+  <label for="b">PT2 Mark (Max 20):</label>
+  <input type="number" id="b" max="20" min="0" />
 
-  <label for="q">Enter Term Mark (50):</label>
-  <input type="number" id="q" /><br />
+  <label for="q">Term Mark (Max 50):</label>
+  <input type="number" id="q" max="50" min="0" />
 
-  <label for="r">Enter MA Mark(5) :</label>
-  <input type="number" id="r" /><br />
+  <label for="r">MA Mark (Max 5):</label>
+  <input type="number" id="r" max="5" min="0" />
 
-  <label for="s">Enter PF Mark (5):</label>
-  <input type="number" id="s" /><br />
+  <label for="s">PF Mark (Max 5):</label>
+  <input type="number" id="s" max="5" min="0" />
 
-  <label for="t">Enter SE Mark (5) :</label>
-  <input type="number" id="t" /><br />
+  <label for="t">SE Mark (Max 5):</label>
+  <input type="number" id="t" max="5" min="0" />
 
-  <button onclick="calculate()">Calculate</button>
+  <div style="margin-top: 15px;">
+    <button onclick="calculate()">Calculate</button>
+    <button onclick="clearFields()">Clear</button>
+  </div>
 
-  <h3>Results:</h3>
-  <p> PT(5) = <span id="x">---</span></p>
-  <p> Term(80) = <span id="y">---</span></p>
-  <p> Total(100) = <span id="z">---</span></p>
-  <p class="result">Grade: <span id="grade">---</span></p>
+  <p id="errorMsg"></p>
+
+  <div class="output">
+    <h3>Results:</h3>
+    <p>PT (out of 5) = <span id="x">---</span></p>
+    <p>Term (out of 80) = <span id="y">---</span></p>
+    <p>Total (out of 100) = <span id="z">---</span></p>
+    <p class="result">Grade: <span id="grade">---</span></p>
+  </div>
 
   <script>
     function calculate() {
@@ -60,18 +100,18 @@
       const s = parseFloat(document.getElementById("s").value);
       const t = parseFloat(document.getElementById("t").value);
 
-      if ([a, b, q, r, s, t].some(isNaN)) {
-        alert("Please enter valid numbers in all fields.");
+      if ([a, b, q, r, s, t].some(val => isNaN(val) || val < 0)) {
+        document.getElementById("errorMsg").textContent = "Please enter valid numbers in all fields.";
         return;
       }
 
+      document.getElementById("errorMsg").textContent = "";
+
       const x = ((a + b) / 40) * 5;
-;
       const y = (q / 50) * 80;
       const z = x + y + r + s + t;
 
       let grade = "";
-
       if (z >= 90) {
         grade = "A+";
       } else if (z >= 75) {
@@ -88,6 +128,12 @@
       document.getElementById("y").textContent = y.toFixed(2);
       document.getElementById("z").textContent = z.toFixed(2);
       document.getElementById("grade").textContent = grade;
+    }
+
+    function clearFields() {
+      ["a", "b", "q", "r", "s", "t"].forEach(id => document.getElementById(id).value = "");
+      ["x", "y", "z", "grade"].forEach(id => document.getElementById(id).textContent = "---");
+      document.getElementById("errorMsg").textContent = "";
     }
   </script>
 </body>
